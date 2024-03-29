@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser(
     description="Normalize audio files to a specified LUFS level."
 )
 parser.add_argument(
-    "i", "folder", type=str, help="Folder containing the audio files to be normalized"
+    "-i", "--input_folder", type=str, help="Folder containing the audio files to be normalized"
 )
 parser.add_argument("l", "lufs", type=float, help="Target LUFS level for normalization")
 args = parser.parse_args()
@@ -35,7 +35,7 @@ def normalize(file_path, lufs):
 
 def main():
     args = parser.parse_args()
-    folder = args.folder
+    folder = args.input_folder
     lufs = args.lufs
 
     for filename in os.listdir(folder):

@@ -7,43 +7,50 @@ parser = argparse.ArgumentParser(
     description="Convert audio files to a specified format with given bitrate and sample rate."
 )
 parser.add_argument(
-    "i", "folder", type=str, help="Folder containing the audio files to be converted"
+    "-i", "--input_folder", type=str, help="Folder containing the audio files to be converted"
 )
 parser.add_argument(
-    "f",
-    "format",
+    "-o", "--output_folder", type=str, required=True, help="Output folder for the converted audio files"
+)
+parser.add_argument(
+    "-f",
+    "--format",
     type=str,
     choices=["ogg", "aac", "mp3"],
     help="Target audio format for the conversion",
 )
 parser.add_argument("b", "bitrate", type=str, help="Bitrate for the converted audio")
 parser.add_argument(
-    "s", "sample_rate", type=int, help="Sample rate (kHz) for the converted audio"
+    "-s", "--sample_rate", type=int, help="Sample rate (kHz) for the converted audio"
 )
 
 
 # Process each file in the directory
-def process(file_path, sample_rate, format, bitrate):
+def process(file_path, input_folder, output_folder, sample_rate, format, bitrate):
     audio = AudioSegment.from_file(file_path)
-    # Convert sample rate
-    audio = audio.set_frame_rate(sample_rate * 1000)
-    # Export the audio with the specified format and bitrate
-    export_path = os.path.splitext(file_path)[0] + "." + format
-    audio.export(export_path, format=format, bitrate=bitrate)
+    audio = audio.set_frame_rate(sample_rate * 1000)  # Convert sample rate
+    
+    # Generate export path
+    relative_path = os.path.relpath(file_path, start=input_folder)
+    export_path = os.path.join(output_folder, os.path.splitext(relative_path)[0] + "." + format)
+    os.makedirs(os.path.dirname(export_path), exist_ok=True)  # Ensure the output directory exists
+    
+    audio.export(export_path, format=format, bitrate=bitrate)  # Export the audio
 
 
 def main():
     args = parser.parse_args()
-    folder = args.folder
+    input_folder = args.input_folder
+    output_folder = args.output_folder
     sample_rate = args.sample_rate
     format = args.format
     bitrate = args.bitrate
 
-    for filename in os.listdir(folder):
-        if filename.lower().endswith((".wav", ".mp3")):
-            file_path = os.path.join(args.folder, filename)
-            process(file_path, sample_rate, format, bitrate)
-
+    for root, dirs, files in os.walk(args.input_folder):
+        for filename in files:
+            if filename.lower().endswith((".wav", ".mp3")):
+                file_path = os.path.join(root, filename)
+                process(file_path, input_folder, output_folder, sample_rate, format, bitrate)
 
 if __name__ == "__main__":
     main()
