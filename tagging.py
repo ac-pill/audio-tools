@@ -11,6 +11,8 @@ parser.add_argument("-o", "--output_folder", type=str, required=True, help="Outp
 parser.add_argument("-n", "--filename", type=str, required=False, help="Optional single JSON filename to aggregate all tags")
 
 def process(file_path, json_filename=None):
+    # Show process
+    print(f'Processing file: {file_path}')
     # Load the audio file
     y, sr = librosa.load(file_path, sr=None)
 
@@ -35,7 +37,7 @@ def process(file_path, json_filename=None):
 
     # Building the tags dictionary
     tags = {
-        "Tempo": tempo,
+        "Tempo": "{:.0f}".format(tempo),
         "Key": f"{key_note} {key_type}",
         "Mood": "",
         "Instruments": "",
