@@ -41,7 +41,8 @@ def process(file_path, json_filename=None):
         "Key": f"{key_note} {key_type}",
         "Mood": "",
         "Instruments": "",
-        "Genre": ""
+        "Genre": "",
+        "Location": "",
     }
 
     return os.path.basename(file_path), tags
