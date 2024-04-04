@@ -43,6 +43,7 @@ def process(file_path, json_filename=None):
         "Instruments": "",
         "Genre": "",
         "Location": "",
+        "Misc": "",
     }
 
     return os.path.basename(file_path), tags
@@ -66,15 +67,16 @@ def main():
 
     for root, _, files in os.walk(args.input_folder):
         for filename in files:
-            if filename.lower().endswith((".wav", ".mp3")):
+            if filename.lower().endswith((".wav", ".mp3", ".ogg", ".m4a")):
                 file_path = os.path.join(root, filename)
-                basename, tags = process(file_path)
+                full_filename, tags = process(file_path)
+                basename, extension = os.path.splitext(os.path.basename(full_filename))
 
                 if args.filename:
                     aggregated_tags[basename] = tags
                 else:
                     individual_output_path = os.path.join(args.output_folder, f"{basename}.json")
-                    save_to_json({basename: tags}, individual_output_path)
+                    save_to_json(tags, individual_output_path)
                     print(f"Saved tags for {basename} to {individual_output_path}")
 
     if args.filename:

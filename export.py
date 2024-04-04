@@ -1,11 +1,13 @@
 # Export audio pipeline
 # Usage: python export.py -i infolder -o outfolder -f m4a -b 96k -s 44.1 -d 16 -es 1 -fd 2 -t 15 60 -n -c -l -23
+# For SVS production - Soundraw: python export.py -i input/Azuki_Raw -o output  -f m4a -b 96k -s 44.1 -d 16 -es 1 -fd 2  -n -l -23
+# For SVS production - Suno: 
 
 import os
 import argparse
 import subprocess
 import tempfile
-import shutil
+import time
 
 from pydub import AudioSegment
 from pydub.effects import normalize, compress_dynamic_range
@@ -105,6 +107,8 @@ def process(
     compress_audio,
     lufs=None,
 ):
+    # Start Timer
+    start_time = time.time()
 
     audio = AudioSegment.from_file(file_path)
     print(f"Processing: {os.path.basename(file_path)}")
@@ -150,7 +154,6 @@ def process(
             print(f'Normalizing to LUFS: {lufs}')
             fx_normalize_lufs(temp_wav_path, normalized_wav_path, lufs)
             
-
             # Read the normalized WAV file
             audio = AudioSegment.from_file(normalized_wav_path)
 
@@ -176,14 +179,21 @@ def process(
         os.path.dirname(export_path), exist_ok=True
     )  # Ensure the output directory exists
     audio.export(export_path, format=ffmpeg_format, bitrate=bitrate)
+    
     print(f"Exported: {os.path.basename(export_path)}")
     print(
-        f" - Format: {file_format}, Bitrate: {bitrate}, Sample Rate: {sample_rate} kHz, Bit Depth: {bit_depth} bit\n"
+        f" - Format: {file_format}, Bitrate: {bitrate}, Sample Rate: {sample_rate} kHz, Bit Depth: {bit_depth} bit"
     )
+    # Time tracking
+    end_time = time.time()  # End timing for this file
+    processing_time = end_time - start_time
+    print(f"File processed in {processing_time:.2f} seconds.\n")
 
 
 def main():
     args = parser.parse_args()
+    total_start_time = time.time()  # Start timing for the entire batch
+
     input_folder = args.input_folder
     output_folder = args.output_folder
     sample_rate = args.sample_rate
@@ -221,6 +231,10 @@ def main():
                     compress_audio=compress_flag,
                     lufs=lufs,
                 )
+
+    total_end_time = time.time()  # End timing for the entire batch
+    total_processing_time = total_end_time - total_start_time
+    print(f"Total processing time for all files: {total_processing_time:.2f} seconds.")
 
 
 if __name__ == "__main__":
