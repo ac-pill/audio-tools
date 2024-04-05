@@ -1,3 +1,6 @@
+# tagging.py
+# Usage:
+# python tagging.py -i output/Azuki -o output/Azuki
 import os
 import argparse
 import json
