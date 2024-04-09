@@ -1,7 +1,7 @@
 # Export audio pipeline
 # Usage: python export.py -i infolder -o outfolder -f m4a -b 96k -s 44.1 -d 16 -es 1 -fd 2 -t 15 60 -n -c -l -23
 # For SVS production - Soundraw: python export.py -i input/Raw/Azuki/Soundraw -o output/Azuki  -f m4a -b 96k -s 44.1 -d 16 -es 1 -fd 2 -n -l -23
-# For SVS production - Suno: python export.py -i input/Raw/Azuki/Suno -o output/Azuki  -f m4a -b 96k -s 44.1 -d 16 -t 15 60 -fd 2 -n -l -23
+# For SVS production - Suno: python export.py -i input/Raw/Azuki/Suno -o output/Azuki -f m4a -b 96k -s 44.1 -d 16 -t 25 60 -fd 2 -n -l -23
 
 import os
 import argparse
